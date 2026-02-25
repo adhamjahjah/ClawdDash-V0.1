@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="theme-color" content="#0f0f0f"/>
+  <title>OpenClaw</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<div class="app">
+
+  <!-- ── Header ── -->
+  <header class="header">
+    <div class="header-left">
+      <div class="avatar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M4.5 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM14.25 8.625a3.375 3.375 0 1 1 6.75 0 3.375 3.375 0 0 1-6.75 0ZM1.5 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM17.25 19.128l-.001.144a2.25 2.25 0 0 1-.233.96 10.088 10.088 0 0 0 5.06-1.01.75.75 0 0 0 .42-.643 4.875 4.875 0 0 0-6.957-4.611 8.586 8.586 0 0 1 1.71 5.157v.003Z" fill="currentColor"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="header-title">OpenClaw</h1>
+        <div class="header-meta">
+          <span class="status-dot" id="hdr-dot"></span>
+          <span id="hdr-label">Working</span>
+          <span class="dot-sep">·</span>
+          <span id="hdr-active">3 active</span>
+        </div>
+      </div>
+    </div>
+    <button class="icon-btn" id="btn-refresh" aria-label="Refresh">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+        <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="currentColor"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- ── Tab panes ── -->
+  <main class="main">
+
+    <!-- HOME -->
+    <section class="tab-pane active" id="pane-home">
+      <div id="widget-active-tasks" class="home-widget"></div>
+      <div id="widget-quick-stats" class="home-widget"></div>
+      <div id="widget-coming-up" class="home-widget"></div>
+      <div id="widget-failed" class="home-widget" style="display:none"></div>
+      <div id="widget-recent-logs" class="home-widget"></div>
+    </section>
+
+    <!-- TASKS -->
+    <section class="tab-pane" id="pane-tasks">
+      <div class="filter-bar">
+        <button class="filter-chip active" data-filter="all">All <span class="chip-n" id="fc-all">0</span></button>
+        <button class="filter-chip" data-filter="running">Running <span class="chip-n" id="fc-running">0</span></button>
+        <button class="filter-chip" data-filter="pending">Pending <span class="chip-n" id="fc-pending">0</span></button>
+        <button class="filter-chip" data-filter="waiting_input">Waiting <span class="chip-n" id="fc-waiting">0</span></button>
+        <button class="filter-chip" data-filter="failed">Failed <span class="chip-n" id="fc-failed">0</span></button>
+        <button class="filter-chip" data-filter="completed">Done <span class="chip-n" id="fc-done">0</span></button>
+      </div>
+      <div id="task-list" class="task-list"></div>
+    </section>
+
+    <!-- SCHEDULED -->
+    <section class="tab-pane" id="pane-scheduled">
+      <div id="schedule-list" class="schedule-list"></div>
+    </section>
+
+    <!-- LOGS -->
+    <section class="tab-pane" id="pane-logs">
+      <div class="filter-bar">
+        <button class="filter-chip active" data-filter="all">All</button>
+        <button class="filter-chip" data-filter="error">Errors</button>
+        <button class="filter-chip" data-filter="warning">Warnings</button>
+        <button class="filter-chip" data-filter="info">Info</button>
+        <button class="filter-chip" data-filter="debug">Debug</button>
+      </div>
+      <div id="log-list" class="log-list"></div>
+    </section>
+
+    <!-- ANALYTICS -->
+    <section class="tab-pane" id="pane-analytics">
+      <div class="kpi-grid" id="kpi-grid"></div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Task Types</span>
+          <span class="card-hint">Last 30 days</span>
+        </div>
+        <div class="bar-chart" id="type-chart"></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Status Overview</span>
+        </div>
+        <div id="status-dist"></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Top Failure Reasons</span>
+        </div>
+        <ul class="failure-list" id="failure-list"></ul>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── Tab bar ── -->
+  <nav class="tab-bar">
+    <button class="tab-btn active" data-tab="home">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/>
+      </svg>
+      <span>Home</span>
+    </button>
+    <button class="tab-btn" data-tab="tasks">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" fill="currentColor"/>
+      </svg>
+      <span>Tasks</span>
+      <div class="tab-badge" id="badge-failed"></div>
+    </button>
+    <button class="tab-btn" data-tab="scheduled">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z" fill="currentColor"/>
+      </svg>
+      <span>Scheduled</span>
+    </button>
+    <button class="tab-btn" data-tab="logs">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" fill="currentColor"/>
+      </svg>
+      <span>Logs</span>
+    </button>
+    <button class="tab-btn" data-tab="analytics">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zM16.2 13h2.8v6h-2.8v-6z" fill="currentColor"/>
+      </svg>
+      <span>Analytics</span>
+    </button>
+  </nav>
+
+</div>
+<script src="script.js"></script>
+</body>
+</html>
