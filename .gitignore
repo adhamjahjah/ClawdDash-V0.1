@@ -1,0 +1,13 @@
+# Python
+backend/__pycache__/
+backend/*.db
+backend/*.db-shm
+backend/*.db-wal
+backend/.env
+
+# Claude Code
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
